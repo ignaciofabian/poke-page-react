@@ -1,6 +1,28 @@
+import { Header } from '../components/Header'
+import { Footer } from '../components/Footer'
+import { useEffect } from "react";
+import { useLocation } from "react-router";
+
+
 export function Inicio() {
+
+    const location = useLocation();
+
+    useEffect(() => {
+        if (location.hash === "#contacto") {
+            const contacto = document.getElementById("contacto");
+            if(contacto){
+                contacto.scrollIntoView({
+                    behavior: "smooth"
+                });
+            }
+        }
+    }, [location]);
+
     return <>
             
+        <Header />
+
         <section className="categorias">
             <h2>Encuentra tus cartas por categoría</h2>
 
@@ -204,6 +226,8 @@ export function Inicio() {
             <p>📧 Email: pokestore@gmail.com</p>
             <p>📱 Teléfono: +56 9 1234 5678</p>
         </section>
+
+        <Footer />
     
     </>
  

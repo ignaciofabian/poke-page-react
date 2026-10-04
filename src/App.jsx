@@ -1,10 +1,28 @@
 import './App.css'
-import { Inicio } from './Pages/Inicio'
+
+import { Routes, Route } from 'react-router-dom';
+
+import { Inicio } from './pages/Inicio'
+
 function App() {
   return (
-    <>
-      <Inicio></Inicio>
-    </>
+    <Routes>
+
+      <Route
+        path="/"
+        element={<Inicio />}
+      />
+
+      <Route
+        path="/login"
+        element={<Login />}
+      />
+
+    </Routes>
+
+
+
+
   )
 }
 
