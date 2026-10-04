@@ -1,7 +1,11 @@
+import { Header } from '../components/Header'
+import { Footer } from '../components/Footer'
 import "../assets/CSS/nosotros.css"
 export function Nosotros() {
 
     return <>
+
+        <Header />
         <main className="catalogo nosotros-contenido">
             <section className="nosotros-presentacion" aria-labelledby="nosotros-titulo">
                 <img src="img/poke-bola.png" alt="" width="96" height="96" />
@@ -58,7 +62,7 @@ export function Nosotros() {
             </section>
         </main>
 
-
+        <Footer />
 
     </>
 }

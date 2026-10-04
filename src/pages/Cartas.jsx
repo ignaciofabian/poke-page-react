@@ -1,8 +1,11 @@
-
+import { Header } from '../components/Header'
+import { Footer } from '../components/Footer'
 export function Cartas() {
 
     return <>
         
+        <Header />
+
         <section className="categorias">
             <h2>Categorías</h2>
 
@@ -649,6 +652,6 @@ export function Cartas() {
                 </div>
             </section>
         </main>
-
+        <Footer />
     </>
 }

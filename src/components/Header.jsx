@@ -1,26 +1,27 @@
 import "../assets/CSS/layout.css"
+import { NavLink } from "react-router";
 
 export function Header() {
     return <>
         <header className="catalogo-header">
             <div className="header-contenedor">
                 <div className="logo-tienda">
-                    <a href="index.html" className="logo-link">
+                    <NavLink to="/" className="logo-link">
                         <div className="logo-titulo">
                             <h1>PokéStore</h1>
                             <img src="img/poke-bola.png" alt="Pokébola" className="pokebola-logo" />
                         </div>
-                    </a>
+                    </NavLink>
 
                     <p>Cartas Pokémon para coleccionistas</p>
                 </div>
 
                 <nav className="menu">
-                    <a href="index.html">Inicio</a>
-                    <a href="cartas.html">Cartas</a>
-                    <a href="nosotros.html">Nosotros</a>
-                    <a href="index.html#contacto">Contacto</a>
-                    <a href="login.html" id="usuario-header" className="usuario-header">👤 <span id="nombre-header">Iniciar sesión</span></a>
+                    <NavLink to="/">Inicio</NavLink>
+                    <NavLink to="/cartas">Cartas</NavLink>
+                    <NavLink to="/nosotros">Nosotros</NavLink>
+                    <NavLink to="/#contacto">Contacto</NavLink>
+                    <NavLink to="/login" id="usuario-header" className="usuario-header">👤 <span id="nombre-header">Iniciar sesión</span></NavLink>
                     <button id="btn-cerrar-sesion-header" className="btn-salir-header" hidden>Salir</button>
 
                     <button className="cart-btn" id="openCart">
