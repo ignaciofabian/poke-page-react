@@ -1,60 +1,113 @@
-/* Estilos de la página Nosotros */
-.nosotros-logo {
-  color: #0051b3;
-  font-size: 2rem;
-  font-weight: bold;
-  text-decoration: none;
-}
-
-.menu a[aria-current="page"] {
-  color: #0051b3;
-  text-decoration: underline;
-  text-underline-offset: 6px;
-}
+/* Estilos de la página Nosotros (variables en layout.css) */
 
 .nosotros-contenido {
-  max-width: 1000px;
-  color: #333;
-  line-height: 1.7;
+  max-width: 1040px;
+  line-height: 1.75;
 }
 
+/* ===== Hero ===== */
+
 .nosotros-presentacion {
-  padding: 36px 24px;
-  border-top: 4px solid #0051b3;
-  border-radius: 8px;
-  background: #fff;
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+
+  padding: 56px 28px;
+
   text-align: center;
+  color: #cbd5e1;
+
+  border-radius: var(--radio-lg);
+  background: linear-gradient(120deg, var(--azul-noche), var(--azul-oscuro), #3b2a8a, var(--azul-noche));
+  background-size: 300% 300%;
+  box-shadow: var(--sombra-fuerte);
+
+  animation: degradado-mover 14s ease infinite;
+}
+
+/* Brillos de color */
+.nosotros-presentacion::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(380px circle at 20% 10%, rgba(96, 165, 250, 0.35), transparent 60%),
+    radial-gradient(320px circle at 85% 90%, rgba(251, 191, 36, 0.2), transparent 60%);
 }
 
 .nosotros-presentacion img {
   object-fit: contain;
+  filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.45));
+  animation: flotar 4s ease-in-out infinite;
 }
 
 .nosotros-etiqueta {
-  color: #0051b3;
-  font-weight: bold;
+  width: fit-content;
+  margin: 14px auto 0;
+  padding: 4px 14px;
+
+  border: 1px solid rgba(251, 191, 36, 0.35);
+  border-radius: 999px;
+  background: rgba(251, 191, 36, 0.12);
+
+  color: var(--amarillo);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+
+  animation: aparecer-arriba 0.7s 0.1s var(--ease) backwards;
 }
 
 .nosotros-presentacion h1 {
-  margin: 8px 0 16px;
-  color: #0051b3;
-  font-size: clamp(2rem, 5vw, 2.6rem);
+  margin: 14px 0 14px;
+  color: var(--blanco);
+  font-size: clamp(2.2rem, 5vw, 3rem);
+  font-weight: 800;
+  animation: aparecer-arriba 0.7s 0.2s var(--ease) backwards;
 }
 
 .nosotros-presentacion > p {
-  max-width: 680px;
+  max-width: 660px;
   margin: 12px auto;
+  font-size: 1.05rem;
+  animation: aparecer-arriba 0.7s 0.3s var(--ease) backwards;
 }
 
+.nosotros-presentacion .ver-mas {
+  animation: aparecer-arriba 0.7s 0.4s var(--ease) backwards;
+}
+
+/* Botón amarillo sobre el fondo oscuro */
+.nosotros-presentacion .ver-mas a {
+  background: var(--degradado-acento);
+  color: var(--azul-noche);
+  box-shadow: 0 8px 24px rgba(251, 191, 36, 0.35);
+}
+
+.nosotros-presentacion .ver-mas a:hover {
+  box-shadow: 0 12px 30px rgba(251, 191, 36, 0.5);
+}
+
+/* ===== Secciones ===== */
+
 .nosotros-seccion {
-  margin: 36px 0;
+  margin: 56px 0;
 }
 
 .nosotros-contenido h2 {
-  color: #575881;
-  font-size: 1.5rem;
-  margin-bottom: 16px;
+  font-size: 1.7rem;
+  margin-bottom: 18px;
 }
+
+.nosotros-seccion > p {
+  color: var(--texto-suave);
+  font-size: 1.05rem;
+  max-width: 780px;
+}
+
+/* ===== Valores ===== */
 
 .nosotros-valores {
   display: grid;
@@ -63,62 +116,131 @@
 }
 
 .nosotros-valor {
-  padding: 24px;
-  border: 1px solid #e5e5e5;
-  border-radius: 8px;
-  background: #fff;
+  position: relative;
+  overflow: hidden;
+
+  padding: 28px 24px;
+
+  background: var(--blanco);
+  border: 1px solid var(--borde);
+  border-radius: var(--radio-lg);
+  box-shadow: var(--sombra);
+
+  transition:
+    transform 0.5s var(--ease),
+    box-shadow 0.5s var(--ease),
+    border-color 0.3s ease;
+}
+
+/* Brillo degradado que aparece al pasar el mouse */
+.nosotros-valor::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: radial-gradient(260px circle at 0% 0%, rgba(37, 99, 235, 0.1), transparent 70%);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.nosotros-valor > * {
+  position: relative;
+}
+
+.nosotros-valor:hover {
+  transform: translateY(-8px);
+  border-color: rgba(37, 99, 235, 0.3);
+  box-shadow: var(--sombra-fuerte);
+}
+
+.nosotros-valor:hover::before {
+  opacity: 1;
 }
 
 .nosotros-valor span {
-  font-size: 2rem;
+  display: inline-grid;
+  place-items: center;
+
+  width: 56px;
+  height: 56px;
+
+  font-size: 1.7rem;
+
+  border-radius: var(--radio);
+  background: linear-gradient(135deg, #eff6ff, #fef3c7);
+
+  transition: transform 0.5s var(--ease-rebote);
+}
+
+.nosotros-valor:hover span {
+  transform: scale(1.15) rotate(-8deg);
 }
 
 .nosotros-valor h3 {
-  margin: 12px 0 8px;
-  color: #0051b3;
+  margin: 16px 0 8px;
+  font-size: 1.1rem;
+  font-weight: 700;
 }
 
 .nosotros-valor p {
-  margin: 0;
+  color: var(--texto-suave);
+  font-size: 0.95rem;
 }
 
+/* ===== Consejos ===== */
+
 .nosotros-consejos {
-  padding: 20px 24px;
-  background: #fff;
-  border-left: 4px solid #0051b3;
-  border-radius: 8px;
+  padding: 32px;
+  background: var(--blanco);
+  border: 1px solid var(--borde);
+  border-radius: var(--radio-lg);
+  box-shadow: var(--sombra);
 }
 
 .nosotros-consejos ul {
-  padding-left: 20px;
+  list-style: none;
+}
+
+.nosotros-consejos li {
+  position: relative;
+  padding-left: 34px;
+  color: var(--texto-suave);
+}
+
+/* Check verde en lugar de viñeta */
+.nosotros-consejos li::before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+  top: 2px;
+
+  display: grid;
+  place-items: center;
+
+  width: 22px;
+  height: 22px;
+
+  border-radius: 50%;
+  background: #dcfce7;
+  color: var(--verde);
+
+  font-size: 0.75rem;
+  font-weight: 800;
 }
 
 .nosotros-consejos li + li {
-  margin-top: 10px;
+  margin-top: 12px;
 }
+
+/* ===== Contacto ===== */
 
 .nosotros-contacto {
   text-align: center;
 }
 
-a:focus-visible {
-  outline: 3px solid #0051b3;
-  outline-offset: 4px;
-}
-
-@media (max-width: 1000px) {
-  .header-contenedor {
-    flex-direction: column;
-  }
-
-  .menu {
-    flex-wrap: wrap;
-    gap: 15px;
-  }
-
-  .logo-tienda {
-    text-align: center;
-  }
+.nosotros-contacto > p {
+  color: var(--texto-suave);
+  font-size: 1.05rem;
 }
 
 @media (max-width: 750px) {
@@ -126,7 +248,11 @@ a:focus-visible {
     grid-template-columns: 1fr;
   }
 
-  .logo-titulo {
-    justify-content: center;
+  .nosotros-presentacion {
+    padding: 44px 20px;
+  }
+
+  .nosotros-consejos {
+    padding: 24px 20px;
   }
 }
