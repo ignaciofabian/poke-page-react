@@ -1,16 +1,31 @@
-# React + Vite
+# PokeStore
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Tienda de cartas Pokemon hecha con React y Vite.
 
-Currently, two official plugins are available:
+## Ejecutar
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+```bash
+npm install
+npm run dev
+```
 
-## React Compiler
+## Carpetas
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- `src/pages`: paginas de la tienda
+- `src/components`: cabecera pie de pagina catalogo y tarjetas
+- `src/data`: lista de cartas
+- `src/assets`: imagenes y estilos
+- `public`: archivos publicos
 
-## Expanding the ESLint configuration
+`main.jsx` inicia React. `App.jsx` tiene las rutas y los datos del carrito y la sesion.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+El acceso es de prueba. Se usa un correo y el codigo `Pokemon123!`.
+Los pedidos se guardan en el navegador y no realizan cobros.
+No se envian correos desde los formularios.
+
+## Revisar
+
+```bash
+npm run lint
+npm run build
+```
