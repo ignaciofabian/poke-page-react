@@ -1,0 +1,64 @@
+/* Estilos de la página Admin (usa las tarjetas de mi-cuenta.css) */
+
+.cuenta-card .form-group select {
+    width: 100%;
+    height: 48px;
+    padding: 0 16px;
+    border: 1px solid var(--borde);
+    border-radius: var(--radio-sm);
+    background-color: var(--fondo);
+    font-family: inherit;
+    font-size: 0.95rem;
+}
+
+.admin-cartas {
+    margin-top: 24px;
+}
+
+/* Lista de cartas y usuarios */
+.admin-lista {
+    list-style: none;
+    max-height: 420px;
+    overflow-y: auto;
+}
+
+.admin-lista li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--borde);
+}
+
+.admin-lista p {
+    color: var(--texto-suave);
+    font-size: 0.85rem;
+}
+
+/* Botones pequeños */
+.admin-btn {
+    margin: 4px;
+    padding: 6px 12px;
+    background: transparent;
+    color: var(--azul);
+    border: 1px solid var(--azul);
+    border-radius: var(--radio-sm);
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.25s ease;
+}
+
+.admin-btn:hover {
+    background: var(--azul);
+    color: var(--blanco);
+}
+
+.admin-btn-rojo {
+    color: var(--rojo);
+    border-color: var(--rojo);
+}
+
+.admin-btn-rojo:hover {
+    background: var(--rojo);
+}

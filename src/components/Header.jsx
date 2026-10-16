@@ -9,6 +9,7 @@ export function Header({
   setCartOpen,
   changeQuantity,
   user,
+  isAdmin,
   logout,
   checkout
 }) {
@@ -46,6 +47,7 @@ export function Header({
           <NavLink to="/cartas">Cartas</NavLink>
           <NavLink to="/nosotros">Nosotros</NavLink>
           <Link to="/#contacto">Contacto</Link>
+          {isAdmin && <NavLink to="/admin">Admin</NavLink>}
           <NavLink
             to={user ? '/mi-cuenta' : '/login'}
             className="usuario-header"

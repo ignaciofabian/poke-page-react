@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Link, Navigate, useNavigate } from 'react-router'
+import { isBlocked, registerUser } from '../services/userService'
 import '../assets/CSS/login.css'
 
 export function Login({ mode = 'login', user, login }) {
@@ -42,6 +43,11 @@ export function Login({ mode = 'login', user, login }) {
       setMessage('Escribe un nombre.')
       return
     }
+    if (isBlocked(email)) {
+      setMessage('Tu cuenta está bloqueada. Contacta al administrador.')
+      return
+    }
+    registerUser(email, name.trim())
     login(email, remember, name.trim())
     navigate('/mi-cuenta')
   }
