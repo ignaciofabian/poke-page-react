@@ -12,7 +12,7 @@ describe('Rutas de PokéStore', () => {
       </MemoryRouter>
     )
 
-    expect(document.body).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Cartas destacadas' })).toBeInTheDocument()
   })
 
   test('carga correctamente la ruta de login', () => {
@@ -22,17 +22,20 @@ describe('Rutas de PokéStore', () => {
       </MemoryRouter>
     )
 
-    expect(document.body).toBeInTheDocument()
+    expect(screen.getByLabelText('Correo electrónico')).toBeInTheDocument()
+    expect(screen.getByLabelText('Contraseña')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'INICIAR SESIÓN' })).toBeInTheDocument()
   })
 
-  test('carga correctamente la ruta mi cuenta', () => {
+  test('redirige mi cuenta al login cuando no hay sesión', () => {
     render(
       <MemoryRouter initialEntries={['/mi-cuenta']}>
         <App />
       </MemoryRouter>
     )
 
-    expect(document.body).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'INICIAR SESIÓN' })).toBeInTheDocument()
+    expect(screen.queryByRole('heading', { name: 'Mi cuenta' })).not.toBeInTheDocument()
   })
 
 })

@@ -1,4 +1,4 @@
-import { render } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import { describe, expect, test } from 'vitest'
 import { MemoryRouter } from 'react-router'
 import App from '../App'
@@ -11,6 +11,9 @@ describe('Renderizado de PokéStore', () => {
       </MemoryRouter>
     )
 
-    expect(document.body).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'PokéStore', level: 1 })).toBeInTheDocument()
+    expect(screen.getByRole('navigation')).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Cartas destacadas' })).toBeInTheDocument()
+    expect(screen.getByRole('contentinfo')).toHaveTextContent('Tu tienda de cartas Pokémon')
   })
 })
