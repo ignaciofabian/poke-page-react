@@ -8,6 +8,8 @@ import { Nosotros } from './pages/Nosotros'
 import { Login } from './pages/Login'
 import { MiCuenta } from './pages/MiCuenta'
 import { Productos } from './pages/Productos'
+import { Admin } from './pages/Admin'
+import { ADMIN_EMAIL } from './services/userService'
 import { products } from './data/products'
 
 function readSavedData(storage, key, initialValue) {
@@ -159,6 +161,7 @@ export default function App() {
           setCartOpen={setCartOpen}
           changeQuantity={changeQuantity}
           user={user}
+          isAdmin={user !== null && user.email === ADMIN_EMAIL}
           logout={logout}
           checkout={checkout}
         />
@@ -194,6 +197,7 @@ export default function App() {
             />
           }
         />
+        <Route path="/admin" element={<Admin user={user} />} />
         <Route
           path="/productos/:id"
           element={<Productos key={location.pathname} addItem={addItem} />}
