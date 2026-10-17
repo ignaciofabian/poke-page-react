@@ -4,6 +4,11 @@ Aplicacion de una tienda de cartas Pokemon desarrollada con React y Vite. Permit
 
 El proyecto funciona en el navegador y guarda los datos de prueba mediante `localStorage` y `sessionStorage`. No utiliza un backend ni una base de datos externa.
 
+Demo en vivo
+🚀 Ver PokéStore en funcionamiento
+https://poke-page-react.vercel.app
+Despliegue: Vercel, conectado a la rama main de GitHub.
+
 ## Tecnologias
 
 - **React 19:** componentes funcionales, estado con `useState` y efectos con `useEffect`.
@@ -152,9 +157,3 @@ npm run build
 ```
 
 Para revisar la compilacion en el navegador, ejecuta `npm run preview` despues de `npm run build`.
-
-## Alcance del proyecto
-
-PokeStore es una demostracion de frontend. Las credenciales y permisos se validan en el cliente y los datos se almacenan en el navegador; este mecanismo no constituye autenticacion segura para una tienda real.
-
-Los pedidos no realizan cobros. El newsletter no envia correos y la recuperacion de contrasena muestra un mensaje informativo, sin restablecer el acceso.
