@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link, Navigate, useNavigate } from 'react-router'
-import { isBlocked, registerUser } from '../services/userService'
+import { ADMIN_PASSWORD, authenticateUser, isBlocked, registerUser } from '../services/userService'
 import '../assets/CSS/login.css'
 
 export function Login({ mode = 'login', user, login }) {
@@ -35,7 +35,8 @@ export function Login({ mode = 'login', user, login }) {
       )
       return
     }
-    if (password !== 'Pokemon123!') {
+    const account = mode === 'login' ? authenticateUser(email, password) : null
+    if (mode === 'register' ? password !== ADMIN_PASSWORD : !account) {
       setMessage('El correo o la contraseña son incorrectos.')
       return
     }
@@ -48,7 +49,7 @@ export function Login({ mode = 'login', user, login }) {
       return
     }
     registerUser(email, name.trim())
-    login(email, remember, name.trim())
+    login(email, remember, name.trim() || account?.name || '')
     navigate('/mi-cuenta')
   }
 
