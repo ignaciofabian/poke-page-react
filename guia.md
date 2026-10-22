@@ -1,6 +1,6 @@
 # Guía del proyecto PokéStore (React + Testing)
 
-> Guía para integrantes del equipo que saben **poco o nada de React**.
+> Guía para integrantes del equipo
 > Explica qué hace cada archivo, cómo fluyen los datos, el JavaScript "moderno" que aparece en el código y cómo funcionan los tests.
 > Todo el código del proyecto también está **comentado línea a línea** con estas mismas explicaciones: lee la guía y después abre los archivos.
 
