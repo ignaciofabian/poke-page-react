@@ -1,3 +1,13 @@
+// =============================================================================
+// Nosotros.jsx — PÁGINA /nosotros
+// -----------------------------------------------------------------------------
+// Página de contenido estático: no tiene estado, ni props, ni efectos.
+// Es básicamente el HTML original convertido a JSX (class -> className, etc.)
+// y con los <a href="..."> internos cambiados por <Link to="...">.
+// Los aria-labelledby conectan cada <section> con su título (accesibilidad).
+// =============================================================================
+
+// Importar el CSS propio de esta página.
 import '../assets/CSS/nosotros.css'
 import { Link } from 'react-router'
 export function Nosotros() {
@@ -8,6 +18,9 @@ export function Nosotros() {
           className="nosotros-presentacion"
           aria-labelledby="nosotros-titulo"
         >
+          {/* Las rutas que empiezan con "/" apuntan a la carpeta public/.
+              alt="" = imagen decorativa (los lectores de pantalla la saltan).
+              En JSX las etiquetas sin cierre deben terminar en "/>". */}
           <img src="/img/poke-bola.png" alt="" width="96" height="96" />
           <p className="nosotros-etiqueta">¡Bienvenido, entrenador!</p>
           <h1 id="nosotros-titulo">Sobre nosotros</h1>
@@ -35,6 +48,7 @@ export function Nosotros() {
           <h2 id="valores-titulo">Lo que nos mueve</h2>
           <div className="nosotros-valores">
             <article className="nosotros-valor">
+              {/* aria-hidden: los lectores de pantalla ignoran el emoji. */}
               <span aria-hidden="true">⚡</span>
               <h3>Pasión Pokémon</h3>
               <p>
@@ -85,6 +99,7 @@ export function Nosotros() {
           <h2 id="contacto-titulo">Tu próxima aventura comienza aquí</h2>
           <p>¿Tienes alguna pregunta? Nos encantará saber de ti.</p>
           <div className="ver-mas">
+            {/* Va al inicio y baja a la sección contacto (ver Inicio.jsx). */}
             <Link to="/#contacto">Contáctanos</Link>
           </div>
         </section>

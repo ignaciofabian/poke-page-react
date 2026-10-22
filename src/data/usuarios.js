@@ -1,3 +1,13 @@
+// =============================================================================
+// usuarios.js — USUARIOS DE PRUEBA
+// -----------------------------------------------------------------------------
+// Tres cuentas normales (rol 'user') para probar la app. La primera vez que
+// se ejecuta getUsers() (userService.js) se copian a localStorage.
+// El administrador NO está aquí: sus datos están en userService.js
+// (ADMIN_EMAIL / ADMIN_PASSWORD).
+// Los tests (Usuarios.test.jsx) usan este mismo array con test.each para
+// probar el login de cada usuario.
+// =============================================================================
 export const usuariosIniciales = [
   {
     id: 1,

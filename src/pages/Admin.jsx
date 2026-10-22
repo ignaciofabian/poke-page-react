@@ -1,17 +1,35 @@
+// =============================================================================
+// Admin.jsx — PÁGINA /admin (PANEL DE ADMINISTRACIÓN)
+// -----------------------------------------------------------------------------
+// Solo para admin@pokestore.cl. Permite:
+//   - Agregar / editar / eliminar cartas y restaurar las originales.
+//   - Bloquear / desbloquear / eliminar usuarios.
+// La lógica de guardar datos NO está aquí sino en los "services"
+// (productService.js y userService.js). El componente solo maneja la
+// pantalla y llama a esas funciones. Separar así hace el código más ordenado
+// y más fácil de testear.
+// =============================================================================
+
 import { useState } from 'react'
 import { Navigate } from 'react-router'
 import { money } from '../data/products'
+// "import * as productService" importa TODAS las exportaciones del archivo
+// dentro de un objeto: productService.getProducts(), productService.addProduct()...
 import * as productService from '../services/productService'
 import * as userService from '../services/userService'
 import '../assets/CSS/mi-cuenta.css'
 import '../assets/CSS/admin.css'
 
+// Opciones del <select> de tipo.
 const types = ['fuego', 'agua', 'planta', 'electrico', 'psiquico', 'normal', 'lucha']
 
 export function Admin({ user }) {
+  // Copias de las listas para dibujarlas. Después de cada cambio se vuelven a
+  // pedir al servicio y se guardan con set... para que React re-dibuje.
   const [products, setProducts] = useState(productService.getProducts())
   const [users, setUsers] = useState(userService.getUsers())
   // datos del formulario de cartas
+  // editingId: null = agregando carta nueva; un id = editando esa carta.
   const [editingId, setEditingId] = useState(null)
   const [name, setName] = useState('')
   const [type, setType] = useState('fuego')
@@ -19,10 +37,12 @@ export function Admin({ user }) {
   const [image, setImage] = useState('')
   const [message, setMessage] = useState('')
 
+  // RUTA PROTEGIDA: si no hay sesión o no es el admin, vuelve al inicio.
   if (!user || user.email !== userService.ADMIN_EMAIL) {
     return <Navigate to="/" replace />
   }
 
+  // Deja el formulario vacío (modo "agregar").
   function clearForm() {
     setEditingId(null)
     setName('')
@@ -31,8 +51,10 @@ export function Admin({ user }) {
     setImage('')
   }
 
+  // Guardar el formulario: agrega o actualiza según editingId.
   function submit(event) {
     event.preventDefault()
+    // Los inputs siempre entregan texto: Number('15000') -> 15000.
     const priceNumber = Number(price)
     if (name.trim() === '' || priceNumber <= 0) {
       setMessage('Escribe un nombre y un precio mayor a 0.')
@@ -45,10 +67,12 @@ export function Admin({ user }) {
       productService.addProduct(name.trim(), type, priceNumber, image.trim())
       setMessage('Carta agregada.')
     }
+    // Volver a leer la lista para que la pantalla muestre el cambio.
     setProducts(productService.getProducts())
     clearForm()
   }
 
+  // Botón "Editar": carga los datos de la carta en el formulario.
   function edit(product) {
     setEditingId(product.id)
     setName(product.name)
@@ -58,6 +82,8 @@ export function Admin({ user }) {
     setMessage('')
   }
 
+  // window.confirm muestra la ventanita "Aceptar / Cancelar" del navegador
+  // y devuelve true si el usuario aceptó.
   function removeProduct(product) {
     if (window.confirm(`¿Eliminar la carta ${product.name}?`)) {
       productService.deleteProduct(product.id)
@@ -96,6 +122,7 @@ export function Admin({ user }) {
 
       <div className="cuenta-grid">
         <section className="cuenta-card">
+          {/* Mismo formulario para agregar y editar; cambia el título. */}
           <h2>{editingId ? '✏️ Editar carta' : '➕ Agregar carta'}</h2>
           <form onSubmit={submit}>
             <div className="form-group">
@@ -110,6 +137,7 @@ export function Admin({ user }) {
             </div>
             <div className="form-group">
               <label htmlFor="admin-tipo">Tipo</label>
+              {/* <select> controlado: value + onChange igual que un input. */}
               <select
                 id="admin-tipo"
                 value={type}
@@ -144,6 +172,8 @@ export function Admin({ user }) {
             <button className="btn-actualizar" type="submit">
               {editingId ? 'Guardar cambios' : 'Agregar carta'}
             </button>
+            {/* "Cancelar" solo aparece mientras se edita.
+                type="button" para que NO envíe el formulario. */}
             {editingId && (
               <button className="admin-btn" type="button" onClick={clearForm}>
                 Cancelar
@@ -165,6 +195,7 @@ export function Admin({ user }) {
                     {item.email} · {item.blocked ? 'Bloqueado' : 'Activo'}
                   </p>
                 </div>
+                {/* El admin no puede bloquearse/eliminarse a sí mismo. */}
                 {item.email !== user.email && (
                   <div>
                     <button className="admin-btn" onClick={() => toggleUser(item.email)}>

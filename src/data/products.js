@@ -1,3 +1,21 @@
+// =============================================================================
+// products.js — DATOS DE LAS CARTAS (catálogo inicial)
+// -----------------------------------------------------------------------------
+// No hay base de datos: las cartas son un array de objetos escrito a mano.
+// Cada carta tiene:
+//   id    -> identificador único, se usa en la URL (/productos/pikachu)
+//   type  -> tipo, se usa para filtrar (?tipo=fuego)
+//   name  -> nombre visible
+//   price -> precio en pesos chilenos (número)
+//   image -> URL de la imagen
+//
+// "export const" permite importarlo en otros archivos con
+//   import { products } from '../data/products'
+//
+// IMPORTANTE: productService.js MODIFICA este mismo array cuando el admin
+// agrega/edita/elimina cartas (y lo guarda en localStorage). Por eso todos
+// los componentes que importan "products" ven los cambios del admin.
+// =============================================================================
 export const products = [
   {
     id: 'pikachu',
@@ -281,6 +299,11 @@ export const products = [
   },
 ]
 
+// Función para mostrar precios en formato chileno: money(15000) -> "$15.000".
+// Es una FUNCIÓN FLECHA guardada en una constante; equivale a:
+//   export function money(value) { return new Intl.NumberFormat(...).format(value) }
+// Intl.NumberFormat es una herramienta nativa de JS para formatear números
+// según el país ('es-CL') y la moneda ('CLP').
 export const money = (value) =>
   new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP' }).format(
     value,
