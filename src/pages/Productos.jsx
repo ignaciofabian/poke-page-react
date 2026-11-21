@@ -1,10 +1,21 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link, useParams } from 'react-router'
 import { products, money } from '../data/products'
 import { ProductCard } from '../components/ProductCard'
 export function Productos({ addItem }) {
   const { id } = useParams()
-  const product = products.find((item) => item.id === id)
+  const [product, setProduct] = useState(null)
+
+  useEffect(() => {
+    async function fetchData() {
+      const cards = await fetch(`http://localhost:3000/api/v1/cards/${id}`)
+      const data = await cards.json()
+      console.log(data)
+      setProduct(data)
+    }
+
+    fetchData()
+  }, [])
   const [quantity, setQuantity] = useState(1)
   if (!product)
     return (
