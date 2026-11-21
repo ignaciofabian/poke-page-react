@@ -1,6 +1,7 @@
 import { useSearchParams } from 'react-router'
 import { products } from '../data/products'
 import { ProductCard } from './ProductCard'
+import { useEffect, useState } from 'react'
 
 const categories = [
   { type: 'todos', name: '⭐ Todas' },
@@ -27,17 +28,27 @@ export function Catalog({ featured = false, addItem }) {
     'blastoise',
     'raichu'
   ]
+  const [visible, setVisible] = useState(products)
 
+  useEffect(() => {
+    async function fetchData() {
+      const cards = await fetch('http://localhost:3000/api/v1/cards')
+      const data = await cards.json()
+      console.log(data)
+      setVisible(data.filter((product) => {
+        if (featured && !hasFilters && !featuredIds.includes(product.id)) {
+          return false
+        }
+        if (type !== 'todos' && product.type !== type) {
+          return false
+        }
+        return product.name.toLowerCase().includes(query.trim().toLowerCase())
+      }))
+    }
+
+    fetchData()
+  }, [])
   // revisar el nombre y la categoria antes de mostrar la carta
-  const visible = products.filter((product) => {
-    if (featured && !hasFilters && !featuredIds.includes(product.id)) {
-      return false
-    }
-    if (type !== 'todos' && product.type !== type) {
-      return false
-    }
-    return product.name.toLowerCase().includes(query.trim().toLowerCase())
-  })
 
   function changeSearch(value) {
     setParams({ tipo: type, q: value }, { replace: true })
