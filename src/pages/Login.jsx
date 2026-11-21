@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link, Navigate, useNavigate } from 'react-router'
-import { ADMIN_PASSWORD, authenticateUser, isBlocked, registerUser } from '../services/userService'
+import { authenticateUser, registerUser } from '../services/userService'
 import '../assets/CSS/login.css'
 
 export function Login({ mode = 'login', user, login }) {
@@ -9,6 +9,7 @@ export function Login({ mode = 'login', user, login }) {
   const [password, setPassword] = useState('')
   const [name, setName] = useState('')
   const [remember, setRemember] = useState(false)
+  const [pending, setPending] = useState(false)
   const [message, setMessage] = useState('')
 
   if (user) {
@@ -26,7 +27,7 @@ export function Login({ mode = 'login', user, login }) {
     buttonText = 'RECUPERAR CONTRASEÑA'
   }
 
-  function submit(event) {
+  async function submit(event) {
     // evitar que el formulario recargue la pagina
     event.preventDefault()
     if (mode === 'recover') {
@@ -35,22 +36,19 @@ export function Login({ mode = 'login', user, login }) {
       )
       return
     }
-    const account = mode === 'login' ? authenticateUser(email, password) : null
-    if (mode === 'register' ? password !== ADMIN_PASSWORD : !account) {
-      setMessage('El correo o la contraseña son incorrectos.')
-      return
+    if (pending) return
+    setPending(true)
+    try {
+      const account = mode === 'register'
+        ? await registerUser(email, password, name.trim())
+        : await authenticateUser(email, password)
+      login(account, remember)
+      navigate('/mi-cuenta')
+    } catch (error) {
+      setMessage(error.status === 401 ? 'El correo o la contraseña son incorrectos.' : error.status ? error.message : 'No se pudo conectar con el servidor.')
+    } finally {
+      setPending(false)
     }
-    if (mode === 'register' && name.trim() === '') {
-      setMessage('Escribe un nombre.')
-      return
-    }
-    if (isBlocked(email)) {
-      setMessage('Tu cuenta está bloqueada. Contacta al administrador.')
-      return
-    }
-    registerUser(email, name.trim())
-    login(email, remember, name.trim() || account?.name || '')
-    navigate('/mi-cuenta')
   }
 
   return (
@@ -119,7 +117,7 @@ export function Login({ mode = 'login', user, login }) {
             </>
           )}
           <p role="status">{message}</p>
-          <button type="submit">{buttonText}</button>
+          <button type="submit" disabled={pending}>{buttonText}</button>
         </form>
         <div className="register">
           {mode === 'login' && (

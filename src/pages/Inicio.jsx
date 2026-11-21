@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { Link, useLocation } from 'react-router'
 import { Catalog } from '../components/Catalog'
-export function Inicio({ addItem }) {
+export function Inicio(props) {
   const location = useLocation()
   useEffect(() => {
     if (location.hash === '#contacto') {
@@ -13,7 +13,7 @@ export function Inicio({ addItem }) {
   }, [location])
   return (
     <>
-      <Catalog featured addItem={addItem} />
+      <Catalog featured {...props} />
       <div className="ver-mas">
         <Link to="/cartas">Ver todas las cartas</Link>
       </div>

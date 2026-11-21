@@ -1,25 +1,21 @@
-import { requestInterceptor } from "jsdom";
-import { describe, expect, it } from "vitest";
-import { render, screen } from '@testing-library/react'
+import { expect, test, vi } from 'vitest'
+import { fireEvent, render, screen, within } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
-import { Inicio as PaginaInicio } from '../pages/Inicio'
-import { Catalog as Catalogo } from '../components/Catalog'
+import App from '../App'
 
-describe("Inicio", () => {
-  it("muestra la página de inicio con contacto y acceso al catálogo", () => {
-    const Inicio = requestInterceptor("../src/pages/Inicio.jsx");
-    expect(Inicio).toBeDefined(); // Ejemplo de prueba simple
-    render(<MemoryRouter><PaginaInicio /></MemoryRouter>)
-    expect(screen.getByRole('heading', { name: 'Contacto' })).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: 'Ver todas las cartas' })).toHaveAttribute('href', '/cartas')
-  });
-
-  it("muestra cartas destacadas y excluye las que no son destacadas", () => {
-    const Catalog = requestInterceptor("../src/components/Catalog.jsx");
-    expect(Catalog).toBeDefined(); // Ejemplo de prueba simple
-    render(<MemoryRouter><Catalogo featured /></MemoryRouter>)
-    expect(screen.getByRole('heading', { name: 'Cartas destacadas' })).toBeInTheDocument()
-    expect(screen.getByRole('heading', { name: 'Pikachu' })).toBeInTheDocument()
-    expect(screen.queryByRole('heading', { name: 'Bulbasaur' })).not.toBeInTheDocument()
-  });
-});
+test('filtra las cartas de la API y suma su precio desde el detalle', async () => {
+  const cards = [
+    { id: 'a', name: 'Carta A', type: 'agua', price: 900, image: '/a.png' },
+    { id: 'b', name: 'Carta B', type: 'fuego', price: 200, image: '/b.png' }
+  ]
+  vi.mocked(fetch).mockResolvedValue({ ok: true, json: async () => cards })
+  render(<MemoryRouter initialEntries={['/cartas']}><App /></MemoryRouter>)
+  await screen.findByRole('heading', { name: 'Carta B' })
+  fireEvent.click(screen.getByRole('button', { name: /Agua/ }))
+  expect(screen.queryByRole('heading', { name: 'Carta B' })).toBeNull()
+  fireEvent.click(within(screen.getByRole('heading', { name: 'Carta A' })).getByRole('link'))
+  fireEvent.click(screen.getByRole('button', { name: 'Sumar cantidad' }))
+  fireEvent.click(screen.getByRole('button', { name: 'Añadir al carrito' }))
+  const drawer = screen.getByRole('complementary', { name: 'Tu carrito' })
+  expect(within(drawer).getByText(/1\.800/)).toBeInTheDocument()
+})

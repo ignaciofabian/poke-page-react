@@ -1,7 +1,5 @@
 import { useSearchParams } from 'react-router'
-import { products } from '../data/products'
 import { ProductCard } from './ProductCard'
-import { useEffect, useState } from 'react'
 
 const categories = [
   { type: 'todos', name: '⭐ Todas' },
@@ -14,7 +12,7 @@ const categories = [
   { type: 'lucha', name: '🥊 Lucha' }
 ]
 
-export function Catalog({ featured = false, addItem }) {
+export function Catalog({ featured = false, addItem, products = [], status }) {
   const [params, setParams] = useSearchParams()
   const type = params.get('tipo') || 'todos'
   const query = params.get('q') || ''
@@ -28,27 +26,11 @@ export function Catalog({ featured = false, addItem }) {
     'blastoise',
     'raichu'
   ]
-  const [visible, setVisible] = useState(products)
-
-  useEffect(() => {
-    async function fetchData() {
-      const cards = await fetch('http://localhost:3000/api/v1/cards')
-      const data = await cards.json()
-      console.log(data)
-      setVisible(data.filter((product) => {
-        if (featured && !hasFilters && !featuredIds.includes(product.id)) {
-          return false
-        }
-        if (type !== 'todos' && product.type !== type) {
-          return false
-        }
-        return product.name.toLowerCase().includes(query.trim().toLowerCase())
-      }))
-    }
-
-    fetchData()
-  }, [])
-  // revisar el nombre y la categoria antes de mostrar la carta
+  const visible = products.filter(product =>
+    (!featured || hasFilters || featuredIds.includes(product.id)) &&
+    (type === 'todos' || product.type === type) &&
+    product.name.toLowerCase().includes(query.trim().toLowerCase())
+  )
 
   function changeSearch(value) {
     setParams({ tipo: type, q: value }, { replace: true })
@@ -98,7 +80,7 @@ export function Catalog({ featured = false, addItem }) {
             <button type="submit">Buscar</button>
           </form>
           <h2>{title}</h2>
-          <p role="status">{visible.length} cartas encontradas</p>
+          <p role="status">{status === 'loading' ? 'Cargando cartas…' : status === 'error' ? 'No se pudo cargar el catálogo.' : visible.length + ' cartas encontradas'}</p>
           <div className={gridClass}>
             {visible.map((product) => (
               <ProductCard
@@ -108,7 +90,7 @@ export function Catalog({ featured = false, addItem }) {
               />
             ))}
           </div>
-          {visible.length === 0 && (
+          {status === 'ready' && visible.length === 0 && (
             <p>No encontramos cartas. Busca otro nombre o categoría.</p>
           )}
         </section>

@@ -9,8 +9,8 @@ import { Login } from './pages/Login'
 import { MiCuenta } from './pages/MiCuenta'
 import { Productos } from './pages/Productos'
 import { Admin } from './pages/Admin'
-import { ADMIN_EMAIL } from './services/userService'
-import { products } from './data/products'
+import { send } from './services/api'
+import { getProducts } from './services/productService'
 
 function readSavedData(storage, key, initialValue) {
   try {
@@ -37,11 +37,27 @@ export default function App() {
   )
   const [user, setUser] = useState(() => {
     const savedUser = readSavedData(localStorage, 'pokestore-user', null)
-    if (savedUser) {
-      return savedUser
-    }
-    return readSavedData(sessionStorage, 'pokestore-user', null)
+    const account = savedUser || readSavedData(sessionStorage, 'pokestore-user', null)
+    return account?.token && account.expiresAt > Date.now() ? account : null
   })
+  const [products, setProducts] = useState([])
+  const [status, setStatus] = useState('loading')
+  useEffect(() => {
+    const controller = new AbortController()
+    getProducts(controller.signal).then(cards => {
+      if (controller.signal.aborted) return
+      setProducts(cards)
+      setStatus('ready')
+    }).catch(() => {
+      if (!controller.signal.aborted) setStatus('error')
+    })
+    return () => controller.abort()
+  }, [])
+  useEffect(() => {
+    if (!user) return
+    const timer = setTimeout(() => setUser(null), Math.max(0, user.expiresAt - Date.now()))
+    return () => clearTimeout(timer)
+  }, [user])
   const [cartOpen, setCartOpen] = useState(false)
 
   // guardar el carrito para no perderlo al recargar
@@ -83,12 +99,7 @@ export default function App() {
     setCart(updatedCart)
   }
 
-  function login(email, remember, name) {
-    let accountName = name
-    if (!accountName) {
-      accountName = email.split('@')[0]
-    }
-    const account = { email: email.trim().toLowerCase(), name: accountName }
+  function login(account, remember) {
     localStorage.removeItem('pokestore-user')
     sessionStorage.removeItem('pokestore-user')
     if (remember) {
@@ -99,22 +110,21 @@ export default function App() {
     setUser(account)
   }
 
+  async function updateUser(nombre) {
+    const saved = await send('/auth/perfil', 'PATCH', user.token, {nombre})
+    const account = {...user, name: saved.nombre}
+    const storage = localStorage.getItem('pokestore-user') ? localStorage : sessionStorage
+    if (!storage.getItem('pokestore-user')) return
+    storage.setItem('pokestore-user', JSON.stringify(account))
+    setUser(account)
+  }
+
   function logout() {
     localStorage.removeItem('pokestore-user')
     sessionStorage.removeItem('pokestore-user')
     setUser(null)
     setCartOpen(false)
     navigate('/login')
-  }
-
-  function updateUser(name) {
-    const account = { email: user.email, name: name.trim() }
-    if (localStorage.getItem('pokestore-user')) {
-      localStorage.setItem('pokestore-user', JSON.stringify(account))
-    } else {
-      sessionStorage.setItem('pokestore-user', JSON.stringify(account))
-    }
-    setUser(account)
   }
 
   // calcular el total usando las cantidades del carrito
@@ -161,14 +171,14 @@ export default function App() {
           setCartOpen={setCartOpen}
           changeQuantity={changeQuantity}
           user={user}
-          isAdmin={user !== null && user.email === ADMIN_EMAIL}
+          isAdmin={user?.role === 'admin'}
           logout={logout}
           checkout={checkout}
         />
       )}
       <Routes>
-        <Route path="/" element={<Inicio addItem={addItem} />} />
-        <Route path="/cartas" element={<Cartas addItem={addItem} />} />
+        <Route path="/" element={<Inicio products={products} status={status} addItem={addItem} />} />
+        <Route path="/cartas" element={<Cartas products={products} status={status} addItem={addItem} />} />
         <Route path="/nosotros" element={<Nosotros />} />
         <Route
           path="/login"
@@ -190,17 +200,17 @@ export default function App() {
           path="/mi-cuenta"
           element={
             <MiCuenta
-              user={user}
               updateUser={updateUser}
+              user={user}
               logout={logout}
               orders={orders}
             />
           }
         />
-        <Route path="/admin" element={<Admin user={user} />} />
+        <Route path="/admin" element={<Admin onProducts={setProducts} user={user} products={products} status={status} />} />
         <Route
           path="/productos/:id"
-          element={<Productos key={location.pathname} addItem={addItem} />}
+          element={<Productos key={location.pathname} products={products} status={status} addItem={addItem} />}
         />
         <Route
           path="*"

@@ -1,16 +1,16 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Navigate } from 'react-router'
 import { money } from '../data/products'
-import * as productService from '../services/productService'
-import * as userService from '../services/userService'
+import { getProducts } from '../services/productService'
+import { send } from '../services/api'
 import '../assets/CSS/mi-cuenta.css'
 import '../assets/CSS/admin.css'
 
 const types = ['fuego', 'agua', 'planta', 'electrico', 'psiquico', 'normal', 'lucha']
 
-export function Admin({ user }) {
-  const [products, setProducts] = useState(productService.getProducts())
-  const [users, setUsers] = useState(userService.getUsers())
+export function Admin({ user, products, onProducts }) {
+  const [users, setUsers] = useState([])
+  const [busy, setBusy] = useState(false)
   // datos del formulario de cartas
   const [editingId, setEditingId] = useState(null)
   const [name, setName] = useState('')
@@ -19,7 +19,33 @@ export function Admin({ user }) {
   const [image, setImage] = useState('')
   const [message, setMessage] = useState('')
 
-  if (!user || user.email !== userService.ADMIN_EMAIL) {
+  useEffect(() => {
+    if (user?.role !== 'admin') return
+    let active = true
+    send('/admin/users', 'GET', user.token).then(list => {
+      if (active) setUsers(list)
+    }).catch(() => { if (active) setMessage('No se pudieron cargar los usuarios.') })
+    return () => { active = false }
+  }, [user])
+
+  async function change(path, method, body, success, usersOnly = false) {
+    if (busy) return
+    setBusy(true)
+    try {
+      await send('/admin/' + path, method, user.token, body)
+      if (usersOnly) setUsers(await send('/admin/users', 'GET', user.token))
+      else {
+        onProducts(await getProducts())
+        clearForm()
+      }
+      setMessage(success)
+    } catch (error) {
+      setMessage(error.status ? error.message : 'No se pudo completar la solicitud.')
+    } finally {
+      setBusy(false)
+    }
+  }
+  if (user?.role !== 'admin') {
     return <Navigate to="/" replace />
   }
 
@@ -38,15 +64,9 @@ export function Admin({ user }) {
       setMessage('Escribe un nombre y un precio mayor a 0.')
       return
     }
-    if (editingId) {
-      productService.updateProduct(editingId, name.trim(), type, priceNumber, image.trim())
-      setMessage('Carta actualizada.')
-    } else {
-      productService.addProduct(name.trim(), type, priceNumber, image.trim())
-      setMessage('Carta agregada.')
-    }
-    setProducts(productService.getProducts())
-    clearForm()
+    const path = editingId ? 'cards/' + encodeURIComponent(editingId) : 'cards'
+    change(path, editingId ? 'PUT' : 'POST', {name: name.trim(), type, price: priceNumber, image: image.trim()},
+      editingId ? 'Carta actualizada.' : 'Carta agregada.')
   }
 
   function edit(product) {
@@ -60,28 +80,24 @@ export function Admin({ user }) {
 
   function removeProduct(product) {
     if (window.confirm(`¿Eliminar la carta ${product.name}?`)) {
-      productService.deleteProduct(product.id)
-      setProducts(productService.getProducts())
+      change('cards/' + encodeURIComponent(product.id), 'DELETE', undefined, 'Carta eliminada.')
     }
   }
 
   function reset() {
     if (window.confirm('¿Volver a las cartas originales?')) {
-      productService.resetProducts()
-      setProducts(productService.getProducts())
-      clearForm()
+      change('cards/reset', 'POST', undefined, 'Cartas restauradas.')
     }
   }
 
   function toggleUser(email) {
-    userService.toggleBlocked(email)
-    setUsers(userService.getUsers())
+    const item = users.find(account => account.email === email)
+    change('users/' + encodeURIComponent(email), 'PATCH', {blocked: !item.blocked}, 'Usuario actualizado.', true)
   }
 
   function removeUser(email) {
     if (window.confirm(`¿Eliminar el usuario ${email}?`)) {
-      userService.deleteUser(email)
-      setUsers(userService.getUsers())
+      change('users/' + encodeURIComponent(email), 'DELETE', undefined, 'Usuario eliminado.', true)
     }
   }
 
@@ -141,11 +157,11 @@ export function Admin({ user }) {
                 onChange={(event) => setImage(event.target.value)}
               />
             </div>
-            <button className="btn-actualizar" type="submit">
+            <button disabled={busy} className="btn-actualizar" type="submit">
               {editingId ? 'Guardar cambios' : 'Agregar carta'}
             </button>
             {editingId && (
-              <button className="admin-btn" type="button" onClick={clearForm}>
+              <button disabled={busy} className="admin-btn" type="button" onClick={clearForm}>
                 Cancelar
               </button>
             )}
@@ -160,14 +176,14 @@ export function Admin({ user }) {
             {users.map((item) => (
               <li key={item.email}>
                 <div>
-                  <strong>{item.name}</strong>
+                  <strong>{item.nombre}</strong>
                   <p>
                     {item.email} · {item.blocked ? 'Bloqueado' : 'Activo'}
                   </p>
                 </div>
                 {item.email !== user.email && (
                   <div>
-                    <button className="admin-btn" onClick={() => toggleUser(item.email)}>
+                    <button disabled={busy} className="admin-btn" onClick={() => toggleUser(item.email)}>
                       {item.blocked ? 'Desbloquear' : 'Bloquear'}
                     </button>
                     <button
@@ -196,7 +212,7 @@ export function Admin({ user }) {
                 </p>
               </div>
               <div>
-                <button className="admin-btn" onClick={() => edit(product)}>
+                <button disabled={busy} className="admin-btn" onClick={() => edit(product)}>
                   Editar
                 </button>
                 <button
@@ -210,7 +226,7 @@ export function Admin({ user }) {
           ))}
         </ul>
         <div className="cerrar-sesion-contenedor">
-          <button className="btn-cerrar-sesion" onClick={reset}>
+          <button disabled={busy} className="btn-cerrar-sesion" onClick={reset}>
             Restaurar cartas originales
           </button>
         </div>

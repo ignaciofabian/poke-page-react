@@ -1,8 +1,8 @@
 import { Catalog } from '../components/Catalog'
-export function Cartas({ addItem }) {
+export function Cartas(props) {
   return (
     <>
-      <Catalog addItem={addItem} />
+      <Catalog {...props} />
     </>
   )
 }

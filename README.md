@@ -1,197 +1,91 @@
 # PokéStore
 
-[![Live](https://img.shields.io/badge/live-poke--page--react.vercel.app-brightgreen?logo=vercel)](https://poke-page-react.vercel.app)
-![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=white)
-![Vite](https://img.shields.io/badge/Vite-8-646CFF?logo=vite&logoColor=white)
-![Vitest](https://img.shields.io/badge/tests-28%20pasando-success?logo=vitest&logoColor=white)
-![Estado](https://img.shields.io/badge/estado-actualizado-blue)
+Tienda académica de cartas Pokémon desarrollada por Ignacio, Bryan y Felipe para **Duoc UC**. El catálogo permite buscar cartas por nombre y tipo, consultar su precio en pesos chilenos y armar un pedido de demostración. El panel de administración permite mantener el inventario y gestionar las cuentas desde la misma aplicación.
 
-**🔴 Live:** **[https://poke-page-react.vercel.app](https://poke-page-react.vercel.app)**
+Este repositorio contiene el frontend en **React 19, React Router y Vite**. La [API de PokéStore](https://github.com/bburgosvader/backend-pokepage) está desarrollada con **Express, TypeScript y MongoDB**.
 
-Tienda en línea de cartas Pokémon desarrollada con React y Vite como proyecto académico de DUOC UC. Permite explorar un catálogo de cartas, filtrarlas por tipo, administrar un carrito, registrarse, iniciar sesión, confirmar pedidos de prueba y gestionar cartas y usuarios desde un panel de administrador.
+## Qué puedes hacer
 
-El proyecto nació como un sitio HTML estático de varias páginas y fue migrado a una SPA en React. Funciona completamente en el navegador: los datos de prueba se guardan con `localStorage` y `sessionStorage`, sin backend ni base de datos externa.
-
-## Estado del proyecto
-
-✅ **Actualizado (octubre 2026).** La migración a React está completa y todas las funcionalidades descritas en este documento están implementadas y desplegadas.
-
-- Rutas, carrito, sesión y pedidos funcionando en React (`App.jsx`).
-- Panel de administrador para cartas y usuarios.
-- Suite de pruebas con Vitest: 7 archivos y 28 pruebas pasando, incluidas pruebas de accesibilidad con jest-axe.
-- Despliegue continuo en Vercel desde la rama `main` de GitHub: cada cambio fusionado en `main` se publica automáticamente en el enlace **Live**.
-
-## Demo en vivo
-
-| | |
+| Acceso | Funciones |
 | --- | --- |
-| **URL** | [https://poke-page-react.vercel.app](https://poke-page-react.vercel.app) |
-| **Plataforma** | Vercel |
-| **Rama desplegada** | `main` |
-| **Repositorio** | [github.com/ignaciofabian/poke-page-react](https://github.com/ignaciofabian/poke-page-react) |
+| Visitante | Explorar cartas destacadas, filtrar el catálogo, consultar detalles y relacionados, y agregar unidades al carrito. |
+| Cliente | Crear una cuenta, iniciar sesión, editar el nombre, confirmar un pedido de prueba y consultar su historial en el mismo navegador. |
+| Administrador | Crear, editar y eliminar cartas, restaurar el catálogo original y bloquear, desbloquear o eliminar usuarios. |
 
-Para probar la demo puedes usar cualquiera de las [cuentas de prueba](#cuentas-de-prueba). Con la cuenta de administrador se habilita el acceso a `/admin`.
+MongoDB guarda las cartas, las cuentas y los cambios administrativos. El navegador conserva el carrito, los pedidos de demostración y las suscripciones al newsletter. La sesión usa un JWT de una hora. **Recordarme** guarda la sesión en `localStorage`; en caso contrario se utiliza `sessionStorage`.
 
-> Los datos que crees en la demo (usuarios, pedidos, cambios al catálogo) se guardan solo en tu navegador. Para volver al estado inicial, borra los datos del sitio desde la configuración del navegador.
+## Desarrollo local
 
-## Funcionalidades
+Necesitas ambos repositorios, npm, **Node.js 24.15 o posterior de la rama 24** y una base de datos MongoDB accesible. Si vas a probar la restauración del catálogo, usa MongoDB Atlas o un replica set que admita transacciones.
 
-**Para clientes**
+### 1. Preparar la API
 
-- Página de inicio con cartas destacadas e información de contacto.
-- Catálogo de 40 cartas con búsqueda por nombre y filtros por tipo (agua, eléctrico, fuego, lucha, normal, planta y psíquico).
-- Detalle de cada carta, con selector de cantidad y productos relacionados.
-- Carrito para agregar, aumentar, disminuir y eliminar productos; se conserva al recargar la página.
-- Registro e inicio de sesión, con opción **Recordarme** y cierre de sesión.
-- Mi cuenta: edición del nombre y consulta de los pedidos propios.
-- Confirmación de pedidos de prueba para usuarios con sesión iniciada.
-- Suscripción al newsletter.
-- Página 404 para rutas inexistentes.
+En la raíz de `backend-pokepage`, crea un archivo `.env` con estos valores de ejemplo y sustituye el secreto antes de iniciar el servidor.
 
-**Para el administrador**
+```dotenv
+MONGO_URI=mongodb://127.0.0.1:27017/pokestore
+JWT_SECRET=reemplazar-por-un-secreto-aleatorio
+PORT=3000
+```
 
-- Agregar, editar, eliminar y restaurar cartas del catálogo.
-- Bloquear, desbloquear y eliminar usuarios.
+Desde esa misma carpeta, ejecuta en una terminal:
 
-## Tecnologías
-
-- **React 19:** componentes funcionales, estado con `useState` y efectos con `useEffect`.
-- **Vite:** servidor de desarrollo y compilación para producción.
-- **React Router:** rutas, navegación y parámetros de búsqueda.
-- **CSS:** estilos por página y componente.
-- **Vitest y Testing Library:** pruebas de componentes, rutas y comportamiento de usuarios.
-- **jsdom y jest-axe:** entorno de navegador para pruebas y comprobaciones automáticas de accesibilidad.
-- **ESLint:** revisión estática del código.
-- **Vercel:** hosting y despliegue continuo.
-
-## Requisitos e instalación
-
-La versión instalada de Vite requiere Node.js `20.19+` dentro de la rama 20, o `22.12+`. También necesitas npm.
-
-Clona el repositorio, instala las dependencias e inicia el servidor:
-
-```bash
-git clone https://github.com/ignaciofabian/poke-page-react.git
-cd poke-page-react
-npm install
+```sh
+npm ci
 npm run dev
 ```
 
-Abre la dirección que indique la terminal. Por defecto, Vite suele utilizar `http://localhost:5173`.
+La API empieza a escuchar después de conectarse a MongoDB e inicializar las cuentas. Abre [el endpoint de cartas](http://localhost:3000/api/v1/cards) para comprobarlo. Si devuelve `[]`, la conexión funciona y el catálogo está vacío.
 
-Si PowerShell bloquea la ejecución de `npm.ps1`, puedes usar `npm.cmd` en los mismos comandos, por ejemplo `npm.cmd run dev`.
+### 2. Iniciar el frontend
 
-## Estructura del proyecto
+En una segunda terminal, desde la raíz de `poke-page-react`, ejecuta:
 
-```text
-poke-page-react/
-|-- public/                 # Archivos públicos e imágenes
-|-- src/
-|   |-- assets/             # Imágenes y estilos de las páginas
-|   |-- components/         # Header, Footer, Catalog y ProductCard
-|   |-- data/               # Productos y usuarios iniciales
-|   |-- pages/              # Páginas de la aplicación
-|   |-- services/           # Operaciones sobre usuarios y productos
-|   |-- test/               # Pruebas y configuración compartida
-|   |-- App.jsx             # Rutas, carrito, pedidos y sesión
-|   |-- main.jsx            # Inicio de React y BrowserRouter
-|   |-- index.css           # Estilos globales
-|-- package.json            # Dependencias y comandos
-|-- vite.config.js          # Configuración de Vite y Vitest
+```sh
+npm ci
+npm run dev
 ```
 
-`App.jsx` mantiene el estado compartido del carrito, los pedidos y la sesión, y pasa datos y funciones a las páginas mediante props. Los servicios (`src/services/`) concentran las operaciones de usuarios y productos para mantener esa lógica fuera de los componentes de interfaz.
+Abre la dirección que indique Vite, normalmente [localhost:5173](http://localhost:5173). En desarrollo, Vite reenvía las peticiones de `/api/v1` a `http://localhost:3000`. Si cambias el puerto de la API, ajusta también el destino del proxy en [vite.config.js](vite.config.js).
 
-## Rutas
+### 3. Probar los dos roles
 
-| Ruta | Contenido |
-| --- | --- |
-| `/` | Inicio y cartas destacadas |
-| `/cartas` | Catálogo completo |
-| `/productos/:id` | Detalle de una carta |
-| `/nosotros` | Información de la tienda |
-| `/login` | Inicio de sesión |
-| `/registro` | Registro de usuarios |
-| `/recuperar` | Información sobre recuperación de acceso |
-| `/mi-cuenta` | Datos personales y pedidos; requiere sesión |
-| `/admin` | Panel exclusivo del administrador |
-| `*` | Página no encontrada |
-
-El catálogo utiliza los parámetros `tipo` y `q` en la URL. Por ejemplo, [`/cartas?tipo=fuego`](https://poke-page-react.vercel.app/cartas?tipo=fuego) muestra las cartas de fuego.
-
-## Cuentas de prueba
-
-| Cuenta | Correo | Contraseña |
+| Rol de desarrollo | Correo | Contraseña inicial |
 | --- | --- | --- |
 | Administrador | `admin@pokestore.cl` | `Pokemon123!` |
-| Ignacio | `ignacio@pokestore.cl` | `123456` |
-| Bryan | `bryan@pokestore.cl` | `123456` |
-| Felipe | `felipe@pokestore.cl` | `123456` |
+| Cliente | `ignacio@pokestore.cl` | `123456` |
 
-Los tres usuarios normales están definidos en `src/data/usuarios.js` con el rol `user`. Las credenciales del administrador y la validación de acceso se encuentran en `src/services/userService.js`. El permiso de administrador se comprueba mediante su correo.
+Entra en [Iniciar sesión](http://localhost:5173/login). Con la cuenta administradora aparecerá **Admin** en el menú. Si usas una base de desarrollo vacía, **Restaurar cartas originales** carga las 40 cartas iniciales. En una base con datos, la misma acción **reemplaza todo el catálogo**, incluidas las cartas agregadas o editadas.
 
-Los usuarios iniciales se incorporan una sola vez al almacenamiento sin reemplazar cuentas existentes. Si una cuenta ya tiene una contraseña guardada, se conserva esa contraseña. Los usuarios eliminados desde el panel no se vuelven a crear automáticamente.
+Para probar el flujo de cliente, agrega una carta, cambia la cantidad y confirma el pedido. Encontrarás el resultado en **Mi cuenta**. También puedes crear un usuario desde **Registro**. La opción de recuperación de contraseña invita a contactar con la tienda para solicitar ayuda.
 
-El registro conserva el mecanismo de prueba del proyecto: para crear una cuenta nueva se utiliza la contraseña `Pokemon123!`.
+## Dónde encontrar el código
 
-## Almacenamiento y sesión
-
-| Clave | Almacenamiento | Uso |
-| --- | --- | --- |
-| `pokestore-users` | localStorage | Usuarios registrados y estado de bloqueo |
-| `pokestore-users-initialized` | localStorage | Marca de inicialización de los usuarios de prueba |
-| `pokestore-user` | localStorage o sessionStorage | Sesión actual |
-| `pokestore-cart` | localStorage | Productos y cantidades del carrito |
-| `pokestore-orders` | localStorage | Pedidos de prueba |
-| `pokestore-products` | localStorage | Cambios realizados al catálogo |
-| `pokestore-newsletter` | localStorage | Correos suscritos al newsletter |
-
-Al marcar **Recordarme**, la sesión se guarda en `localStorage`. En caso contrario se guarda en `sessionStorage`. Al cerrar sesión se elimina la cuenta activa de ambos almacenamientos.
-
-Los datos pertenecen al navegador y al origen utilizado para abrir la aplicación (por ejemplo, la demo en Vercel y `localhost` tienen datos separados). No se sincronizan entre dispositivos. Borrar el almacenamiento del sitio elimina los datos guardados localmente.
-
-## Pruebas
-
-Para ejecutar la suite una vez:
-
-```bash
-npm test
-```
-
-Para trabajar con las pruebas en modo observación:
-
-```bash
-npm test -- --watch
-```
-
-Para generar el reporte de cobertura:
-
-```bash
-npm test -- --coverage
-```
-
-Las pruebas están en `src/test` e incluyen inicio, renderizado, rutas, validación de credenciales, usuarios, persistencia con mocks y accesibilidad del login. `setup.js` carga los matchers de Testing Library y `toHaveNoViolations` de jest-axe. Vitest utiliza `jsdom`, configurado en `vite.config.js`.
-
-## Comandos disponibles
-
-| Comando | Descripción |
+| Ubicación | Responsabilidad |
 | --- | --- |
-| `npm run dev` | Inicia el servidor de desarrollo |
-| `npm test` | Ejecuta las pruebas con Vitest |
-| `npm run lint` | Revisa el código con ESLint |
-| `npm run build` | Genera la compilación en `dist/` |
-| `npm run preview` | Sirve localmente la compilación generada |
+| [src/App.jsx](src/App.jsx) | Rutas, sesión, catálogo compartido, carrito y pedidos. |
+| [src/pages/](src/pages/) | Vistas de la tienda, acceso, perfil y panel de administración. |
+| [src/components/](src/components/) | Catálogo con filtros, tarjetas de producto, navegación y carrito lateral. |
+| [src/services/](src/services/) | Cliente HTTP, autenticación y lectura del catálogo. |
+| [src/test/](src/test/) | Pruebas de componentes, rutas, sesión, carrito y accesibilidad. |
 
-Antes de entregar cambios, ejecuta:
+## Pruebas y compilación
 
-```bash
-npm test
-npm run lint
-npm run build
-```
+Ejecuta estos comandos desde el repositorio del frontend. Las pruebas usan Vitest, Testing Library y respuestas simuladas de la API, por lo que pueden ejecutarse con el backend apagado.
 
-Para revisar la compilación en el navegador, ejecuta `npm run preview` después de `npm run build`.
+| Comando | Resultado |
+| --- | --- |
+| `npm test` | Ejecuta la suite una vez. |
+| `npm run test:coverage` | Ejecuta la suite y genera el informe de cobertura. |
+| `npm run lint` | Comprueba el código con ESLint. |
+| `npm run build` | Genera el frontend de producción en `dist/`. |
+| `npm run preview` | Sirve la compilación para revisarla localmente. |
 
-## Equipo
+## Despliegue
 
-Proyecto desarrollado por Ignacio, Bryan y Felipe para DUOC UC.
+Publica `dist/` en un servidor de archivos estáticos. Configura el alojamiento para servir `index.html` al abrir directamente rutas de React como `/cartas` o `/mi-cuenta`.
+
+- **API bajo el mismo dominio.** Reenvía `/api/v1/*` al backend antes de aplicar la regla de rutas de React.
+- **API en otro dominio.** Define `VITE_API_BASE_URL` con la URL pública completa de la API, por ejemplo `https://api.example.com/api/v1`, **antes** de ejecutar `npm run build`. Autoriza el origen del frontend en la configuración CORS de Express.
+
+Configura `MONGO_URI` y `JWT_SECRET` exclusivamente en el servidor. Para inicializar la cuenta `admin@pokestore.cl` en producción, establece `NODE_ENV=production` y `POKESTORE_ADMIN_PASSWORD` en el backend antes del primer arranque. Esa variable se usa al crear la cuenta y no cambia la contraseña de una cuenta existente.

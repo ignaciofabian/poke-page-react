@@ -1,22 +1,12 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { Link, useParams } from 'react-router'
-import { products, money } from '../data/products'
+import { money } from '../data/products'
 import { ProductCard } from '../components/ProductCard'
-export function Productos({ addItem }) {
+export function Productos({ addItem, products, status }) {
   const { id } = useParams()
-  const [product, setProduct] = useState(null)
-
-  useEffect(() => {
-    async function fetchData() {
-      const cards = await fetch(`http://localhost:3000/api/v1/cards/${id}`)
-      const data = await cards.json()
-      console.log(data)
-      setProduct(data)
-    }
-
-    fetchData()
-  }, [])
+  const product = products.find(card => card.id === id)
   const [quantity, setQuantity] = useState(1)
+  if (status !== 'ready') return <main className="catalogo" role="status">{status === 'loading' ? 'Cargando carta…' : 'No se pudo cargar la carta.'}</main>
   if (!product)
     return (
       <>

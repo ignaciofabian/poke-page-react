@@ -10,14 +10,18 @@ export function MiCuenta({ user, updateUser, logout, orders }) {
     return <Navigate to="/login" replace />
   }
 
-  function update(event) {
+  async function update(event) {
     event.preventDefault()
     if (name.trim() === '') {
       setMessage('Escribe un nombre.')
       return
     }
-    updateUser(name)
-    setMessage('Datos actualizados.')
+    try {
+      await updateUser(name.trim())
+      setMessage('Datos actualizados.')
+    } catch {
+      setMessage('No se pudo actualizar el nombre.')
+    }
   }
 
   const ownOrders = orders.filter((order) => order.email === user.email)

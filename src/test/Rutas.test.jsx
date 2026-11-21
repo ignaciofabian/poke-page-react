@@ -12,7 +12,7 @@ describe('Rutas de PokéStore', () => {
       </MemoryRouter>
     )
 
-    expect(document.body).toBeInTheDocument()
+    expect(screen.getByRole('main')).toBeInTheDocument()
   })
 
   test('carga correctamente la ruta de login', () => {
@@ -22,7 +22,7 @@ describe('Rutas de PokéStore', () => {
       </MemoryRouter>
     )
 
-    expect(document.body).toBeInTheDocument()
+    expect(screen.getByRole('main')).toBeInTheDocument()
   })
 
   test('carga correctamente la ruta mi cuenta', () => {
@@ -32,7 +32,7 @@ describe('Rutas de PokéStore', () => {
       </MemoryRouter>
     )
 
-    expect(document.body).toBeInTheDocument()
+    expect(screen.getByRole('main')).toBeInTheDocument()
   })
 
 })
